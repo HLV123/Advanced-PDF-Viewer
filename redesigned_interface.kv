@@ -1,0 +1,242 @@
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
+<DocumentScrollArea>:
+    do_scroll_x: True
+    do_scroll_y: True
+    bar_width: "10dp"
+    bar_color: get_color_from_hex("#6A1B9A")
+    bar_inactive_color: get_color_from_hex("#E1BEE7")
+
+<PageRenderer>:
+    allow_stretch: True
+    keep_ratio: True
+
+<MenuOption@MDNavigationDrawerItem>
+    focus_color: "#E8F5E8"
+    text_color: "#2E7D32"
+    icon_color: "#2E7D32"
+    ripple_color: "#C8E6C9"
+    selected_color: "#4CAF50"
+
+MDScreen:
+    MDNavigationLayout:
+
+        MDScreenManager:
+            MDScreen:
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: "8dp"
+                    md_bg_color: get_color_from_hex("#FAFAFA")
+                    
+                    MDTopAppBar:
+                        title: "Advanced Document Viewer"
+                        elevation: 6
+                        pos_hint: {"top": 1}
+                        md_bg_color: get_color_from_hex("#6A1B9A")
+                        specific_text_color: get_color_from_hex("#FFFFFF")
+                        left_action_items: [["menu", lambda x: nav_menu.set_state("open")]]
+
+                    MDCard:
+                        orientation: "horizontal"
+                        size_hint_y: None
+                        height: "50dp"
+                        padding: "15dp", "8dp"
+                        spacing: "15dp"
+                        elevation: 3
+                        md_bg_color: get_color_from_hex("#F3E5F5")
+                        radius: [8, 8, 8, 8]
+
+                        MDIcon:
+                            icon: "file-document-outline"
+                            size_hint_x: None
+                            width: "30dp"
+                            theme_icon_color: "Custom"
+                            icon_color: get_color_from_hex("#6A1B9A")
+
+                        MDLabel:
+                            text: app.active_file if app.active_file else "No document selected"
+                            halign: "left"
+                            theme_text_color: "Custom"
+                            text_color: get_color_from_hex("#4A148C")
+                            size_hint_x: 0.5
+                            font_style: "Body1"
+
+                        MDIcon:
+                            icon: "magnify"
+                            size_hint_x: None
+                            width: "30dp"
+                            theme_icon_color: "Custom"
+                            icon_color: get_color_from_hex("#6A1B9A")
+
+                        MDLabel:
+                            id: zoom_info
+                            text: app.zoom_percentage
+                            size_hint_x: None
+                            width: "70dp"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: get_color_from_hex("#6A1B9A")
+                            font_style: "Subtitle1"
+                            bold: True
+
+                    MDCard:
+                        orientation: "horizontal"
+                        size_hint_y: None
+                        height: "55dp"
+                        spacing: "12dp"
+                        padding: "8dp"
+                        elevation: 2
+                        md_bg_color: get_color_from_hex("#FFFFFF")
+                        radius: [12, 12, 12, 12]
+
+                        MDIconButton:
+                            icon: "chevron-left-circle"
+                            on_release: app.prev_page()
+                            theme_icon_color: "Custom"
+                            icon_color: get_color_from_hex("#6A1B9A")
+                            icon_size: "35dp"
+
+                        MDSlider:
+                            id: page_slider
+                            min: 1
+                            max: app.total_page_count if app.total_page_count > 0 else 1
+                            value: app.current_page_num
+                            on_value: app.jump_to_page(self, self.value)
+                            size_hint_x: 0.6
+                            color: get_color_from_hex("#6A1B9A")
+
+                        MDLabel:
+                            id: page_counter
+                            text: "Page 0/0"
+                            size_hint_x: None
+                            width: "110dp"
+                            halign: "center"
+                            theme_text_color: "Custom"
+                            text_color: get_color_from_hex("#4A148C")
+                            font_style: "Subtitle2"
+                            bold: True
+
+                        MDIconButton:
+                            icon: "chevron-right-circle"
+                            on_release: app.next_page()
+                            theme_icon_color: "Custom"
+                            icon_color: get_color_from_hex("#6A1B9A")
+                            icon_size: "35dp"
+
+                    DocumentScrollArea:
+                        id: content_area
+                        size_hint_y: 1
+                        bar_width: 12
+
+                        PageRenderer:
+                            id: page_viewer
+                            size_hint: None, None
+                            allow_stretch: True
+
+                    MDCard:
+                        orientation: "horizontal"
+                        size_hint_y: None
+                        height: "65dp"
+                        spacing: "8dp"
+                        padding: "8dp"
+                        pos_hint: {"center_x": 0.5}
+                        elevation: 4
+                        md_bg_color: get_color_from_hex("#FFFFFF")
+                        radius: [15, 15, 15, 15]
+
+                        MDFloatingActionButton:
+                            icon: "folder-multiple"
+                            on_release: app.open_browser()
+                            elevation: 6
+                            md_bg_color: get_color_from_hex("#6A1B9A")
+                            type: 'standard'
+
+                        MDFloatingActionButton:
+                            icon: "plus-circle"
+                            on_release: app.zoom_in()
+                            elevation: 6
+                            md_bg_color: get_color_from_hex("#FF7043")
+                            type: 'standard'
+
+                        MDFloatingActionButton:
+                            icon: "minus-circle"
+                            on_release: app.zoom_out()
+                            elevation: 6
+                            md_bg_color: get_color_from_hex("#FF7043")
+                            type: 'standard'
+
+                        MDFloatingActionButton:
+                            icon: "refresh-circle"
+                            on_release: app.reset_zoom()
+                            elevation: 6
+                            md_bg_color: get_color_from_hex("#66BB6A")
+                            type: 'standard'
+
+                        MDFloatingActionButton:
+                            icon: "brightness-6"
+                            type: 'standard'
+                            on_release: app.toggle_theme()
+                            elevation: 6
+                            md_bg_color: get_color_from_hex("#AB47BC")
+
+        MDNavigationDrawer:
+            id: nav_menu
+            radius: (0, 20, 20, 0)
+            md_bg_color: get_color_from_hex("#F1F8E9")
+
+            MDNavigationDrawerMenu:
+
+                MDNavigationDrawerHeader:
+                    title: "Document Viewer"
+                    title_color: get_color_from_hex("#2E7D32")
+                    text: "Professional PDF Reader"
+                    spacing: "6dp"
+                    padding: "15dp", 0, 0, "60dp"
+
+                MDNavigationDrawerLabel:
+                    text: "Actions"
+                    theme_text_color: "Custom"
+                    text_color: get_color_from_hex("#2E7D32")
+
+                MenuOption:
+                    icon: "folder-multiple-outline"
+                    text: "Browse & Open Document"
+                    on_release: 
+                        nav_menu.set_state("close")
+                        app.open_browser()
+
+                MenuOption:
+                    icon: "brightness-6"
+                    text: "Toggle Theme"
+                    on_release: 
+                        nav_menu.set_state("close")
+                        app.toggle_theme()
+
+                MenuOption:
+                    icon: "plus-circle-outline"
+                    text: "Zoom In"
+                    on_release: 
+                        nav_menu.set_state("close")
+                        app.zoom_in()
+
+                MenuOption:
+                    icon: "minus-circle-outline"
+                    text: "Zoom Out"
+                    on_release: 
+                        nav_menu.set_state("close")
+                        app.zoom_out()
+
+                MenuOption:
+                    icon: "refresh-circle"
+                    text: "Reset View"
+                    on_release: 
+                        nav_menu.set_state("close")
+                        app.reset_zoom()
+
+                MDNavigationDrawerDivider:
+                    color: get_color_from_hex("#A5D6A7")
+
+                MDNavigationDrawerLabel:
+                    text: "Information"
+                    theme_text_color: "Custom"
+                    text_color: get_color_from_hex("#2E7D32")
